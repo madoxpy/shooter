@@ -77,7 +77,7 @@ class Gra(object):
 				cel.kx=cel.kx+1
 				cel.ky=cel.ky+1
 gra=Gra()		
-		
+mouse.set_visible(False)		
 koniec=False
 celownik=1
 while not koniec:
