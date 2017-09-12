@@ -3,8 +3,8 @@ import random
 import numpy as np
 
 init()
-okno=display.set_mode((600,400))
-zegar=time.Clock()
+window=display.set_mode((600,400))
+clock=time.Clock()
 
 black=(0,0,0)
 white=(255,255,255)
@@ -16,7 +16,7 @@ photo=transform.scale(photo,(50,50))
 photo2 = image.load("celownik.png")
 photo2=transform.scale(photo2,(50,50))
 
-class Cel(object):
+class Aim(object):
 	def __init__(self):
 		self.x=random.randint(0,600)
 		self.y=random.randint(0,400)
@@ -25,81 +25,81 @@ class Cel(object):
 		
 		
 		
-class Gra(object):
+class Game(object):
 	def __init__(self):
-		self.wynik=0
-		self.cele=[]
+		self.score=0
+		self.aims=[]
 		for i in range(10):
-			self.cele.append(Cel())
+			self.aims.append(Aim())
 			
-	def rysuj(self):
-		okno.fill(black)
+	def draw(self):
+		window.fill(black)
 		
-		if celownik==1:
-			draw.line(okno,white,(mouse.get_pos()[0],0),(mouse.get_pos()[0],400))
-			draw.line(okno,white,(0,mouse.get_pos()[1]),(600,mouse.get_pos()[1]))
-		elif celownik==2:
-			draw.line(okno,white,(mouse.get_pos()[0],mouse.get_pos()[1]-10),(mouse.get_pos()[0],mouse.get_pos()[1]+10))
-			draw.line(okno,white,(mouse.get_pos()[0]-10,mouse.get_pos()[1]),(mouse.get_pos()[0]+10,mouse.get_pos()[1]))
-		elif celownik==3:
-			draw.line(okno,white,(mouse.get_pos()[0],mouse.get_pos()[1]-30),(mouse.get_pos()[0],mouse.get_pos()[1]+30))
-			draw.line(okno,white,(mouse.get_pos()[0]-30,mouse.get_pos()[1]),(mouse.get_pos()[0]+30,mouse.get_pos()[1]))
-			draw.circle(okno,white,mouse.get_pos(),25,2)
-			draw.circle(okno,white,mouse.get_pos(),4,4)
-		elif celownik==4:
-			okno.blit(photo2,(mouse.get_pos()[0]-25,mouse.get_pos()[1]-25))
+		if view==1:
+			draw.line(window,white,(mouse.get_pos()[0],0),(mouse.get_pos()[0],400))
+			draw.line(window,white,(0,mouse.get_pos()[1]),(600,mouse.get_pos()[1]))
+		elif view==2:
+			draw.line(window,white,(mouse.get_pos()[0],mouse.get_pos()[1]-10),(mouse.get_pos()[0],mouse.get_pos()[1]+10))
+			draw.line(window,white,(mouse.get_pos()[0]-10,mouse.get_pos()[1]),(mouse.get_pos()[0]+10,mouse.get_pos()[1]))
+		elif view==3:
+			draw.line(window,white,(mouse.get_pos()[0],mouse.get_pos()[1]-30),(mouse.get_pos()[0],mouse.get_pos()[1]+30))
+			draw.line(window,white,(mouse.get_pos()[0]-30,mouse.get_pos()[1]),(mouse.get_pos()[0]+30,mouse.get_pos()[1]))
+			draw.circle(window,white,mouse.get_pos(),25,2)
+			draw.circle(window,white,mouse.get_pos(),4,4)
+		elif view==4:
+			window.blit(photo2,(mouse.get_pos()[0]-25,mouse.get_pos()[1]-25))
 
 		
-		czcionka=font.SysFont("comicsansms",72)
-		text = czcionka.render(str(int(self.wynik)),True,green)
-		okno.blit(text,(20,-10))
+		Font=font.SysFont("comicsansms",72)
+		text = Font.render(str(int(self.score)),True,green)
+		window.blit(text,(20,-10))
 		
-		for cel in self.cele:
-			okno.blit(photo,(cel.x,cel.y))
+		for aim in self.aims:
+			window.blit(photo,(aim.x,aim.y))
 			
-	def krok(self):
-		for cel in self.cele:
-			if cel.x>600:
-				cel.x=-25
+	def move(self):
+		for aim in self.aims:
+			if aim.x>600:
+				aim.x=-25
 			else:
-				cel.x=cel.x+cel.kx
-			if cel.y>400:
-				cel.y=-25
+				aim.x=aim.x+aim.kx
+			if aim.y>400:
+				aim.y=-25
 			else:
-				cel.y=cel.y+cel.ky	
-	def strzal(self,x,y):	
-		for cel in self.cele:
-			odleglosc=np.sqrt((x-cel.x-25)**2+(y-cel.y-25)**2)
-			if odleglosc<25:
-				self.wynik=self.wynik+25-odleglosc
-				cel.x=random.randint(0,600)
-				cel.y=random.randint(0,400)
-				cel.kx=cel.kx+1
-				cel.ky=cel.ky+1
-gra=Gra()		
+				aim.y=aim.y+aim.ky	
+	def shoot(self,x,y):	
+		for aim in self.aims:
+			distance=np.sqrt((x-aim.x-25)**2+(y-aim.y-25)**2)
+			if distance<25:
+				self.score=self.score+25-distance
+				aim.x=random.randint(0,600)
+				aim.y=random.randint(0,400)
+				aim.kx=aim.kx+1
+				aim.ky=aim.ky+1
+game=Game()		
 mouse.set_visible(False)		
-koniec=False
-celownik=1
-while not koniec:
+end=False
+view=1
+while not end:
 	for z in event.get():
 		if z.type == QUIT:
-			koniec=True
+			end=True
 		if z.type == MOUSEBUTTONUP:
-			gra.strzal(mouse.get_pos()[0],mouse.get_pos()[1])
+			game.shoot(mouse.get_pos()[0],mouse.get_pos()[1])
 	
 	keys=key.get_pressed()
 	if keys[K_1]:
-		celownik=1
+		view=1
 	if keys[K_2]:
-		celownik=2
+		view=2
 	if keys[K_3]:
-		celownik=3
+		view=3
 	if keys[K_4]:
-		celownik=4
+		view=4
 	if keys[K_5]:
-		celownik=5
+		view=5
 			
-	gra.rysuj()
-	gra.krok()
-	zegar.tick(20)
+	game.draw()
+	game.move()
+	clock.tick(20)
 	display.flip()
